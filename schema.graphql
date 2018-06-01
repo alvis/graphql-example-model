@@ -1,0 +1,62 @@
+#
+#                            *** MIT LICENSE ***
+# -------------------------------------------------------------------------
+# This code may be modified and distributed under the MIT license.
+# See the LICENSE file for details.
+# -------------------------------------------------------------------------
+#
+# @summary   GraphQL schema for the client
+#
+# @author    Alvis HT Tang <alvis@hilbert.space>
+# @license   MIT
+# @copyright Copyright (c) 2018 - All Rights Reserved.
+# -------------------------------------------------------------------------
+#
+
+# import * from 'directives.graphql'
+
+# import Blog, BlogOperation from 'blog.graphql'
+# import User, UserOperation from 'user.graphql'
+
+# schema is declared here only for trigging visitSchema for @forbid
+# see https://www.apollographql.com/docs/graphql-tools/schema-directives.html
+schema @forbid {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  # no @forbid means it'll simply returns null if the user is not autheicated
+  me: User @doc(description: "everything about myself")
+
+  # field visibility on each user is controlled by the permission specified in User
+  users: [User!] @doc(description: "all users in the system")
+
+  # field visibility is controlled by the permission specified in Blog
+  blogs: [Blog!] @doc(description: "all blogs in the system")
+}
+
+type Mutation {
+  #
+  # AUTH
+  #
+
+  authenticate(accessToken: String!): User
+    @doc(
+      description: """
+      after returning from auth0 at the end of the autheication process, the web
+      client should send the access token to this endpoint in order to create create
+      a new user if not exist with the auth0 id extracted from the token
+      """
+    )
+
+  # perform actions on a user
+  user(id: ID!): UserOperation
+
+  #
+  # BLOG
+  #
+
+  # perform actions on a blog
+  blog(id: ID!): BlogOperation
+}
