@@ -1,0 +1,55 @@
+#
+#                            *** MIT LICENSE ***
+# -------------------------------------------------------------------------
+# This code may be modified and distributed under the MIT license.
+# See the LICENSE file for details.
+# -------------------------------------------------------------------------
+#
+# @summary   GraphQL schema related to a Blog
+#
+# @author    Alvis HT Tang <alvis@hilbert.space>
+# @license   MIT
+# @copyright Copyright (c) 2018 - All Rights Reserved.
+# -------------------------------------------------------------------------
+#
+
+# import * from 'directives.graphql'
+
+#
+# QUERY
+#
+
+type Blog {
+  id: ID!
+  timestamp: String!
+  author: User!
+  title: String!
+  content: String!
+  comments: [Comment!] @forbid(unless: { iam: { in: "likedUsers" } })
+  likedUsers: [User!] @forbid(unless: { iam: { the: "author" } })
+  likes: Int!
+}
+
+type Comment @doc(description: "a record representing a comment") {
+  id: ID!
+  timestamp: String!
+  parent: Blog!
+  commenter: User! @doc(description: "the commenter")
+  content: String! @doc(description: "the content")
+}
+
+type Like {
+  blog: Blog!
+  user: User!
+  likes: Int!
+}
+
+#
+# MUTATION
+#
+
+type BlogOperation {
+  # submit a comment to a blog
+  comment(content: String!): Comment!
+  like(increment: Int!): Like!
+}
