@@ -20,41 +20,41 @@
 #
 
 type User {
-  id: ID
-    @doc(description: "the unique identifier of the user")
-    @forbid(unless: { hasScope: "read:user:id" })
+	id: ID!
+		@doc(description: "the unique identifier of the user")
+		@forbid(unless: { hasScope: "read:user:id" })
 
-  name: String
-    @doc(description: "the name of the user")
-    # visible to logged in users
-    @forbid(unless: { isAuthenticated: true })
+	name: String!
+		@doc(description: "the name of the user")
+		# visible to logged in users
+		@forbid(unless: { isAuthenticated: true })
 
-  # this field is visible only if the user is me
-  # e.g. `{ users { groups { name } } }` should return null for all other users
-  # except the currently authenticated user
-  groups: [Group!]
-    @doc(description: "memberships of which the user holds")
-    @forbid(unless: { isMe: true })
+	# this field is visible only if the user is me
+	# e.g. `{ users { groups { name } } }` should return null for all other users
+	# except the currently authenticated user
+	groups: [Group!]
+		@doc(description: "memberships of which the user holds")
+		@forbid(unless: { isMe: true })
 
-  emails: [Email!]
-    @doc(description: "email addresses objected from Auth0")
-    # visible only if the user is me or I'm an ADMIN
-    @forbid(unless: { isMe: true, isAuthorised: true })
+	emails: [Email!]
+		@doc(description: "email addresses objected from Auth0")
+		# visible only if the user is me or I'm an ADMIN
+		@forbid(unless: { isMe: true, isAuthorised: true })
 
-  blogs: [Blog!]
-  # this field is public
+	blogs: [Blog!]
+	# this field is public
 }
 
 type Email @forbid(unless: { isAuthenticated: true }) {
-  address: String!
+	address: String!
 }
 
 type Group {
-  id: ID! @forbid(unless: { hasScope: "read:group:id" })
-  name: String!
-  users: [User!] @forbid(unless: { iam: { in: "admins" } })
-  admins: [User!] @forbid(unless: { iam: { in: "admins" } })
-  authorisedFields: [String!]
+	id: ID! @forbid(unless: { hasScope: "read:group:id" })
+	name: String!
+	users: [User!] @forbid(unless: { iam: { in: "admins" } })
+	admins: [User!] @forbid(unless: { iam: { in: "admins" } })
+	authorisedFields: [String!]
 }
 
 #
@@ -62,21 +62,21 @@ type Group {
 #
 
 type UserOperation {
-  # submit a blog
-  blog(title: String!, content: String!): Blog
-    # allow submission only for users who has a 'write:blog' scope stored in auth0
-    @forbid(unless: { hasScope: "write:blog" })
+	# submit a blog
+	blog(title: String!, content: String!): Blog
+		# allow submission only for users who has a 'write:blog' scope stored in auth0
+		@forbid(unless: { hasScope: "write:blog" })
 
-  assignGroup(groupID: ID!): User
-    @doc(description: "give a new role to the user")
-    @forbid(unless: { hasScope: "grant:role", hasRole: ADMIN })
-  removeGroup(groupID: ID!): User
-    @doc(description: "remove a role from the user")
-    @forbid(unless: { hasScope: "revoke:role", hasRole: ADMIN })
-  grantScope(scope: String!): User
-    @doc(description: "grant a scope to the user via auth0")
-    @forbid(unless: { hasScope: "grant:role" })
-  revokeScope(scope: String!): User
-    @doc(description: "revoke a scope from the user via auth0")
-    @forbid(unless: { hasScope: "revoke:role" })
+	assignGroup(groupID: ID!): User
+		@doc(description: "give a new role to the user")
+		@forbid(unless: { hasScope: "grant:role", hasRole: ADMIN })
+	removeGroup(groupID: ID!): User
+		@doc(description: "remove a role from the user")
+		@forbid(unless: { hasScope: "revoke:role", hasRole: ADMIN })
+	grantScope(scope: String!): User
+		@doc(description: "grant a scope to the user via auth0")
+		@forbid(unless: { hasScope: "grant:role" })
+	revokeScope(scope: String!): User
+		@doc(description: "revoke a scope from the user via auth0")
+		@forbid(unless: { hasScope: "revoke:role" })
 }
