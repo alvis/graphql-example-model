@@ -14,6 +14,7 @@
 #
 
 # import * from 'directives.graphql'
+# import * from 'types.graphql'
 
 #
 # QUERY
@@ -21,7 +22,7 @@
 
 type Blog {
   id: ID!
-  timestamp: String!
+  timestamp: DateTime!
   author: User!
   title: String!
   content: String!
@@ -32,7 +33,7 @@ type Blog {
 
 type Comment @doc(description: "a record representing a comment") {
   id: ID!
-  timestamp: String!
+  timestamp: DateTime!
   parent: Blog!
   commenter: User! @doc(description: "the commenter")
   content: String! @doc(description: "the content")
