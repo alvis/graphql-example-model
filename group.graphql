@@ -1,0 +1,52 @@
+#
+#                            *** MIT LICENSE ***
+# -------------------------------------------------------------------------
+# This code may be modified and distributed under the MIT license.
+# See the LICENSE file for details.
+# -------------------------------------------------------------------------
+#
+# @summary   GraphQL schema related to a User
+#
+# @author    Alvis HT Tang <alvis@hilbert.space>
+# @license   MIT
+# @copyright Copyright (c) 2018 - All Rights Reserved.
+# -------------------------------------------------------------------------
+#
+
+# import * from 'directives.graphql'
+
+#
+# QUERY
+#
+
+type Query {
+  groups: [Group!]
+}
+
+type Group {
+  id: ID! @forbid(unless: { hasScope: "read:group:id" })
+  name: String!
+  users: [User!] @forbid(unless: { iam: { in: "admins" } })
+  admins: [User!] @forbid(unless: { iam: { in: "admins" } })
+}
+
+#
+# MUTATION
+#
+
+type Mutation {
+  group(id: ID!): Group
+  newGroup(name: String!): Group
+}
+
+type GroupOperation {
+  assignAdmin(userID: ID!): Group
+    @doc(description: "assign a user as an admin")
+    @forbid(unless: { iam: { in: "admins" } })
+  assignUser(userID: ID!): Group
+    @doc(description: "add a user to the group")
+    @forbid(unless: { iam: { in: "admins" } })
+  removeUser(userID: ID!): Group
+    @doc(description: "remove a user from the group")
+    @forbid(unless: { iam: { in: "admins" } })
+}
