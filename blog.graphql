@@ -20,6 +20,11 @@
 # QUERY
 #
 
+type Query {
+  # field visibility is controlled by the permission specified in Blog
+  blogs: [Blog!] @doc(description: "all blogs in the system")
+}
+
 type Blog {
   id: ID!
   timestamp: DateTime!
@@ -48,6 +53,11 @@ type Like {
 #
 # MUTATION
 #
+
+type Mutation {
+  # perform actions on a blog
+  blog(id: ID!): BlogOperation
+}
 
 type BlogOperation {
   # submit a comment to a blog
