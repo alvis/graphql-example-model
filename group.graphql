@@ -20,13 +20,14 @@
 #
 
 type Query {
+  groups: [Group!] @forbid(unless: { hasScope: "read:group" })
 }
 
 type AccessGroup {
-	id: ID! @forbid(unless: { hasScope: "read:group:id" })
-	name: String!
-	users: [User!] @forbid(unless: { iam: { in: "admins" } })
-	admins: [User!] @forbid(unless: { iam: { in: "admins" } })
+  id: ID! @forbid(unless: { hasScope: "read:group" })
+  name: String!
+  users: [User!] @forbid(unless: { iam: { in: "admins" } })
+  admins: [User!] @forbid(unless: { iam: { in: "admins" } })
 }
 
 #
@@ -34,19 +35,19 @@ type AccessGroup {
 #
 
 type Mutation {
-	accessGroup(id: String): AccessGroupOperation
+  accessGroup(id: String): AccessGroupOperation
 }
 
 type AccessGroupOperation {
-	add(name: String!, users: [ID!], admins: [ID!]): AccessGroup
-	rename(name: string!): Boolean
-	addAdmin(userID: ID!): Boolean
-		@doc(description: "add a user as an admin")
-		@forbid(unless: { iam: { in: "admins" } })
-	addUser(userID: ID!): Boolean
-		@doc(description: "add a user to the group")
-		@forbid(unless: { iam: { in: "admins" } })
-	removeUser(userID: ID!): Boolean
-		@doc(description: "remove a user from the group")
-		@forbid(unless: { iam: { in: "admins" } })
+  add(name: String!, users: [ID!], admins: [ID!]): AccessGroup
+  rename(name: string!): Boolean
+  addAdmin(userID: ID!): Boolean
+    @doc(description: "add a user as an admin")
+    @forbid(unless: { iam: { in: "admins" } })
+  addUser(userID: ID!): Boolean
+    @doc(description: "add a user to the group")
+    @forbid(unless: { iam: { in: "admins" } })
+  removeUser(userID: ID!): Boolean
+    @doc(description: "remove a user from the group")
+    @forbid(unless: { iam: { in: "admins" } })
 }
