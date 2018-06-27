@@ -21,33 +21,33 @@
 #
 
 type Query {
-  # field visibility is controlled by the permission specified in Blog
-  blogs: [Blog!] @doc(description: "all blogs in the system")
+	# field visibility is controlled by the permission specified in Blog
+	blogs: [Blog!] @doc(description: "all blogs in the system")
 }
 
 type Blog {
-  id: ID!
-  timestamp: DateTime!
-  author: User!
-  title: String!
-  content: String!
-  comments: [Comment!] @forbid(unless: { iam: { in: "likedUsers" } })
-  likedUsers: [User!] @forbid(unless: { iam: { the: "author" } })
-  likes: Int!
+	id: ID!
+	timestamp: DateTime!
+	author: User!
+	title: String!
+	content: String!
+	comments: [Comment!] @forbid(unless: { iam: { in: "likedUsers" } })
+	likedUsers: [User!] @forbid(unless: { iam: { the: "author" } })
+	likes: Int!
 }
 
 type Comment @doc(description: "a record representing a comment") {
-  id: ID!
-  timestamp: DateTime!
-  parent: Blog!
-  commenter: User! @doc(description: "the commenter")
-  content: String! @doc(description: "the content")
+	id: ID!
+	timestamp: DateTime!
+	parent: Blog!
+	commenter: User! @doc(description: "the commenter")
+	content: String! @doc(description: "the content")
 }
 
 type Like {
-  blog: Blog!
-  user: User!
-  likes: Int!
+	blog: Blog!
+	user: User!
+	likes: Int!
 }
 
 #
@@ -55,12 +55,20 @@ type Like {
 #
 
 type Mutation {
-  # perform actions on a blog
-  blog(id: ID!): BlogOperation
+	# perform actions on a blog
+	blog(id: String): BlogOperation
 }
 
 type BlogOperation {
-  # submit a comment to a blog
-  comment(content: String!): Comment!
-  like(increment: Int!): Like!
+	# submit a blog
+	add(title: String!, content: String!): Blog
+		# allow submission only for users who has a 'write:blog' scope stored in auth0
+		@forbid(unless: { hasScope: "write:blog" })
+
+	update(title: String, content: String): Blog
+	remove: Boolean
+
+	# submit a comment to a blog
+	comment(content: String!): Comment!
+	like(increment: Int!): Int!
 }
